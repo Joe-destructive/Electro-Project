@@ -9,7 +9,7 @@
 :root[data-theme="dark"]{--bg:#2B2129;--ink:#F3E6D3;--mut:#cdb9a3;--card:rgba(53,41,50,.96);--ln:#7a5d48;--ir:#DD8E58;--irt:#f0a874;--teal:#708A81;--tealt:#9fbbb1;--amb:#E5D1B8;color-scheme:dark}
 *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--ink);font:17px/1.55 'Bricolage Grotesque',system-ui,sans-serif}
 #bg{position:fixed;inset:0;width:100%;height:100%}
-.s{position:absolute;inset:0;padding:calc(20px + env(safe-area-inset-top,0px)) 18px calc(84px + env(safe-area-inset-bottom,0px));overflow-y:auto;transition:transform .8s cubic-bezier(.65,0,.2,1),opacity .6s}
+.s{position:absolute;inset:0;padding:calc(56px + env(safe-area-inset-top,0px)) 18px calc(84px + env(safe-area-inset-bottom,0px));overflow-y:auto;transition:transform .8s cubic-bezier(.65,0,.2,1),opacity .6s}
 .in{max-width:1000px;margin:0 auto;min-height:100%;display:grid;align-content:center;gap:14px}
 .two{display:grid;grid-template-columns:1fr 1.15fr;gap:20px;align-items:center}@media(max-width:780px){.two{grid-template-columns:1fr}}
 h1{font-size:clamp(34px,7vw,68px);line-height:1.05;margin:0;font-weight:800;max-width:15ch}
@@ -25,7 +25,7 @@ button.on,button.go{background:var(--tealt);color:var(--bg)}button:focus-visible
 .ray{stroke:#DD8E58;stroke-width:2;stroke-dasharray:6 8;animation:fl .7s linear infinite}@keyframes fl{to{stroke-dashoffset:-14}}
 #nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;align-items:center;gap:12px;padding:10px 10px calc(12px + env(safe-area-inset-bottom,0px));z-index:5}
 .d{width:10px;height:10px;border-radius:50%;background:var(--ln);border:0;padding:0;min-height:0}.d.on{background:var(--ir);width:26px;border-radius:6px}
-.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.nt{font-size:16px}.nt ul{margin:0;padding-left:20px}.nt li{margin:5px 0}img{max-width:100%;max-height:44vh;display:block;margin:auto;background:#fff;border-radius:8px}#ds{max-height:38vh}#tv{max-height:34vh}#pn,#ts{max-height:28vh}.logo{width:100px;height:auto;max-height:none;margin:0;padding:6px;border-radius:16px;background:#fff}.fig{font-size:13px;margin-top:6px}.meter{height:12px;background:var(--ln);border-radius:6px;overflow:hidden}.meter div{height:100%;transition:width .3s,background .3s}svg text{font-family:inherit}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.nt{font-size:16px}.nt ul{margin:0;padding-left:20px}.nt li{margin:5px 0}img{max-width:100%;max-height:44vh;display:block;margin:auto;background:#fff;border-radius:8px}#ds{max-height:38vh}#tv{max-height:34vh}#pn,#ts{max-height:28vh}.logo{width:100px;height:auto;max-height:none;margin:0;padding:6px;border-radius:16px;background:#fff}#hud{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));right:12px;z-index:6;background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:6px 10px;font-size:12px;font-weight:600;min-width:140px}#hud .meter{height:6px;margin-top:4px}.fig{font-size:13px;margin-top:6px}.meter{height:12px;background:var(--ln);border-radius:6px;overflow:hidden}.meter div{height:100%;transition:width .3s,background .3s}svg text{font-family:inherit}
 @media(prefers-reduced-motion:reduce){.s{transition:none}.ray{animation:none}}
 </style></head><body>
 <canvas id="bg"></canvas>
@@ -75,6 +75,7 @@ button.on,button.go{background:var(--tealt);color:var(--bg)}button:focus-visible
 
 <section class="s"><div class="in"><h2>Check yourself</h2><div class="card" id="qz"></div></div></section>
 
+<div id="hud" aria-live="polite"><span id="hs"></span><div class="meter"><div id="hb"></div></div></div>
 <div id="nav"><button onclick="go(i-1)" aria-label="Previous">‹</button><span id="dots" style="display:flex;gap:6px;align-items:center"></span><button onclick="go(i+1)" aria-label="Next">›</button></div>
 
 <script>
@@ -98,7 +99,16 @@ $('l').textContent=wl(l);$('f').textContent=fq(f);$('en').textContent=en(1.2398e
 let s=l<1e-7?'Ionizing: enough energy to free electrons and damage DNA.':'Non-ionizing: can heat or excite tissue but cannot ionize atoms.';
 if(b[0]=='Infrared'){const n=l*1e9;s+=n<1400?' Band IR-A (760–1400 nm): what clinical lamps emit.':n<3000?' Band IR-B (1,400–3,000 nm).':' Band IR-C (3,000 nm–1 mm): absorbed in the outermost skin.'}$('bs').textContent=s}
 $('W').oninput=spec;spec();
-function frame(t){bx.clearRect(0,0,bg.width,bg.height);const g=P[i];for(const q in c)c[q]+=(g[q]-c[q])*.06;const W=bg.width,H=bg.height,v=RM?0:c.v*t/700;
+const hx=s=>[1,3,5].map(k=>parseInt(s.slice(k,k+2),16)),mx=(a,b,t)=>{a=hx(a);b=hx(b);return `rgb(${a.map((v,j)=>Math.round(v+(b[j]-v)*t)).join(',')})`};
+let H0=0,cp=0,hl='';const HT=[0,.15,.3,.4,.55,.7,.85,.75,.5,.45,.6,.1],ST=['Lamp off','Switching on','Warming up','Warming up','Stable output','Treatment','Treatment','Treatment','Dose check','Safety check','Heating','Cool-down'],ov={},sn={};
+const SK={l:[['#dbe6e2','#E5D1B8'],['#f1dcc0','#ecc79f'],['#f3d3b0','#eab37f']],d:[['#1f2a2d','#2B2129'],['#3a2a2c','#4a2f27'],['#5e2f20','#7a3a1e']]};
+function sky(t,W,H){const r=document.documentElement.dataset.theme,dk=r?r=='dark':matchMedia('(prefers-color-scheme:dark)').matches,tg=ov[i]!=null?ov[i]:HT[i];H0+=(tg-H0)*.05;const q=H0*2,a=Math.min(1,Math.floor(q)),f=Math.min(1,q-a),Z=SK[dk?'d':'l'],g=bx.createLinearGradient(0,0,0,H);
+g.addColorStop(0,mx(Z[a][0],Z[a+1][0],f));g.addColorStop(1,mx(Z[a][1],Z[a+1][1],f));bx.globalAlpha=1;bx.fillStyle=g;bx.fillRect(0,0,W,H);
+cp+=((i/(S.length-1))-cp)*.05;const ox=W*(.12+.76*cp),oy=H*(.2-.1*Math.sin(Math.PI*cp)),R=34+40*H0,oc=mx('#708A81','#DD8E58',Math.min(1,H0*1.4)),rg=bx.createRadialGradient(ox,oy,0,ox,oy,R*3);
+rg.addColorStop(0,oc);rg.addColorStop(1,'rgba(221,142,88,0)');bx.globalAlpha=.25+.35*H0;bx.fillStyle=rg;bx.beginPath();bx.arc(ox,oy,R*3,0,7);bx.fill();bx.globalAlpha=.9;bx.fillStyle=oc;bx.beginPath();bx.arc(ox,oy,R*.45,0,7);bx.fill();
+for(let k=0;k<3;k++){const fr=RM?.5:((t/1800+k/3)%1);bx.globalAlpha=(1-fr)*.4*H0;bx.strokeStyle='#DD8E58';bx.lineWidth=2;bx.beginPath();bx.arc(ox,oy,R*.5+fr*R*4,0,7);bx.stroke()}bx.globalAlpha=1;
+const lb=sn[i]||ST[i];if(lb!=hl){hl=lb;$('hs').textContent=lb}$('hb').style.width=Math.round(H0*100)+'%';$('hb').style.background=oc}
+function frame(t){const g=P[i];for(const q in c)c[q]+=(g[q]-c[q])*.06;const W=bg.width,H=bg.height,v=RM?0:c.v*t/700;sky(t,W,H);
 [['#708A81',1,0],['#DD8E58',.45,1]].forEach(([s,m,ph])=>{bx.beginPath();for(let x=0;x<=W;x+=6){const y=H*c.y+c.a*m*Math.sin(c.k*x-v)+(ph?c.a*.2*Math.cos(c.k*x-v):0);x?bx.lineTo(x,y):bx.moveTo(x,y)}bx.strokeStyle=s;bx.globalAlpha=.3;bx.lineWidth=3;bx.stroke()});bx.globalAlpha=1;
 if(S[i].id=='sp'){const x=$('wc').getContext('2d');x.clearRect(0,0,600,170);x.beginPath();for(let p=0;p<=600;p+=3){const y=85+60*Math.sin(p/600*cyc*6.283-v*1.5);p?x.lineTo(p,y):x.moveTo(p,y)}x.strokeStyle=col;x.lineWidth=4;x.stroke()}
 requestAnimationFrame(frame)}
@@ -147,7 +157,7 @@ const tc=Math.min(rr*2.2,400),ry=tc/Math.cos(th);
 $('tv').innerHTML=`<path d="M108 24Q150 8 192 24L204 74L190 214H110L96 74Z" fill="#e6b896" stroke="#b98a68"/><line x1="150" y1="30" x2="150" y2="210" stroke="#b98a68" stroke-dasharray="3 4"/><text x="212" y="124" font-size="10" fill="currentColor">lumbar</text>
 <ellipse cx="150" cy="120" rx="${tc}" ry="${ry}" fill="rgba(221,142,88,${.12+h*.3})" stroke="#DD8E58" stroke-width="2" stroke-dasharray="5 4"/>${mt?`<rect x="162" y="138" width="22" height="6" rx="2" fill="#b8c0c8" stroke="#6b7580"/>${hot?'<circle cx="173" cy="141" r="14" fill="rgba(255,70,30,.45)"/>':''}`:''}
 <line x1="20" y1="222" x2="108" y2="222" stroke="currentColor"/><text x="22" y="216" font-size="10" fill="currentColor">40 cm</text><text x="124" y="226" font-size="11" fill="currentColor">Top view of the back</text>`;
-const lv=k<1.2?['Low','#708A81']:k<2.2?['Moderate','#DD8E58']:['High','#c0392b'];
+ov[5]=Math.min(1,.4+h*.6);sn[5]=k>2.2?'Burn risk':d>90?'Too far':d<40?'Too close':'Treatment';const lv=k<1.2?['Low','#708A81']:k<2.2?['Moderate','#DD8E58']:['High','#c0392b'];
 $('st').innerHTML=`<p class="big">${(rel*100).toFixed(0)}% intensity</p><p>Lit area on skin ≈ <b>${area.toFixed(0)} cm²</b> (about ${(2*rr).toFixed(0)} cm across). A bigger area spreads the same energy thinner.</p><p>Lecture example: 80 W at 10 cm becomes <b>${(80*(10/d)**2*Math.cos(th)).toFixed(1)} W</b> at ${d} cm and ${a}°.</p><p>${d<40?'Too close (under 40 cm).':d>90?'Too far (over 90 cm): weak heating.':'Inside the usual 40–90 cm range.'} ${a>0?'Angle '+a+'° keeps only '+(Math.cos(th)*100).toFixed(0)+'% (cos θ) of the energy.':''}</p><div class="meter"><div style="width:${Math.min(100,k*35)}%;background:${lv[1]}"></div></div><p><b>Burn risk: ${lv[0]}.</b> ${ls?'No sensation: the patient cannot warn you, risk doubled. ':''}${mt?'Metal heats quickly: remove it first (risk ×1.5).':''}</p>`}
 ['D','A','ls','mt'].forEach(x=>$(x).oninput=dose);dose();
 /* penetration vs wavelength */
@@ -166,13 +176,13 @@ $('PW').oninput=pn;$('dk').oninput=pn;pn();
 /* Arndt-Schultz */
 function ar(){const d=+$('AS').value,f=x=>.04+.88*Math.exp(-(((x-42)/17)**2));let p='';for(let x=0;x<=100;x+=2)p+=(x?'L':'M')+(20+x*3.6)+' '+(170-140*f(x));
 $('as').innerHTML=`<rect x="92" y="20" width="164" height="150" fill="rgba(112,138,129,.18)"/><path d="${p}" fill="none" stroke="#708A81" stroke-width="3"/><circle cx="${20+d*3.6}" cy="${170-140*f(d)}" r="8" fill="#DD8E58"/><text x="24" y="190" font-size="11" fill="currentColor">dose absorbed per unit time →</text>`;
-$('az').textContent=d<20?'No reaction':d<70?'Therapeutic':'Damaging';$('at').textContent=d<20?'Below the threshold: no stimulation.':d<70?'Enough to start a biological response.':'Too much: toxic, burns tissue.'}
+ov[8]=d/100;sn[8]=d<20?'Below threshold':d<70?'Therapeutic window':'Overdose';$('az').textContent=d<20?'No reaction':d<70?'Therapeutic':'Damaging';$('at').textContent=d<20?'Below the threshold: no stimulation.':d<70?'Enough to start a biological response.':'Too much: toxic, burns tissue.'}
 $('AS').oninput=ar;ar();
 /* Wien */
 function sT(v){$('T').value=v;wn()}
 function wn(){const T=+$('T').value,pk=2898/T,L=x=>20+360*(Math.log10(x)+.7)/2.7,pl=l=>{const z=1.4388e4/(l*T);return 1/(l**5*(Math.exp(z)-1))},m=pl(pk);let p='';for(let q=0,l;q<=100;q++){l=10**(-.7+q*.027);p+=(q?'L':'M')+L(l)+' '+(170-140*Math.min(1,pl(l)/m))}
 $('ws').innerHTML=`<rect x="${L(.38)}" y="20" width="${L(.76)-L(.38)}" height="150" fill="rgba(112,138,129,.3)"/><rect x="${L(.76)}" y="20" width="${380-L(.76)}" height="150" fill="rgba(221,142,88,.14)"/><path d="${p}" fill="none" stroke="#DD8E58" stroke-width="3"/><text x="${L(.38)-4}" y="14" font-size="10" fill="currentColor">visible</text><text x="${L(2)}" y="14" font-size="10" fill="currentColor">infrared</text><text x="24" y="190" font-size="11" fill="currentColor">wavelength 0.2 → 100 µm (log scale)</text>`;
-$('tk').textContent=T+' K';$('tp').textContent='Peak at '+pk.toFixed(2)+' µm: '+(pk<.38?'ultraviolet':pk<.76?'visible light':pk<1.4?'IR-A, with a heat tail beyond':pk<3?'IR-B':'IR-C (far infrared)')}
+ov[10]=Math.min(1,Math.max(0,Math.log(T/250)/Math.log(24)));sn[10]='Lamp at '+T+' K';$('tk').textContent=T+' K';$('tp').textContent='Peak at '+pk.toFixed(2)+' µm: '+(pk<.38?'ultraviolet':pk<.76?'visible light':pk<1.4?'IR-A, with a heat tail beyond':pk<3?'IR-B':'IR-C (far infrared)')}
 $('T').oninput=wn;wn();
 /* quiz */
 const Q=[['Distance from the lamp doubles. Intensity becomes…',['1/2','1/4','1/8'],1,'Inverse-square law: 1/2² = 1/4.'],['Which lamp angle gives maximum absorption?',['0° (perpendicular)','45°','90°'],0,'cos 0° = 1. At 90° rays skim the skin and nothing is absorbed.'],['Why is IR a superficial heating agent?',['It is ionizing','Skin absorbs it in the first few mm','It is reflected completely'],1,'Grotthus–Draper: energy absorbed on top is not left for deeper tissue.']];let sc=0,qn=0;
